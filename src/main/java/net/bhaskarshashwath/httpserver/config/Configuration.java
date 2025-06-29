@@ -22,10 +22,13 @@ public class Configuration {
         this.webroot = webroot;
     }
 
+    // no args constructor
+    public Configuration(){}
+
     // all args constructor
-    public Configuration(int portNumber, String webrootUrl){
-        this.webroot = webrootUrl;
-        this.port = portNumber;
+    public Configuration(int port, String webroot){
+        this.webroot = webroot;
+        this.port = port;
     }
 
 }
