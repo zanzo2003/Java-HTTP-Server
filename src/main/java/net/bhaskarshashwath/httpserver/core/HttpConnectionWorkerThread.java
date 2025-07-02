@@ -18,11 +18,13 @@ public class HttpConnectionWorkerThread extends Thread{
     }
 
     @Override
-    public void run(){
+    public void run() {
 
+        OutputStream outputStream = null;
+        InputStream inputStream = null;
         try {
-            InputStream inputStream = socket.getInputStream();
-            OutputStream outputStream = socket.getOutputStream();
+            inputStream = socket.getInputStream();
+            outputStream = socket.getOutputStream();
 
             String html = "<html> <head> <title>Java HTTP Server</title> </head> <body> <h1>Simple JAVA HTTP server</h1> </body></html>";
             final String CRLF = "\r\n";
@@ -37,13 +39,19 @@ public class HttpConnectionWorkerThread extends Thread{
             outputStream.write(content);
             outputStream.flush();
 
-            inputStream.close();
-            outputStream.close();
-            this.socket.close();
-
             LOGGER.info("Connection processing finished");
+
         } catch (IOException e) {
             throw new RuntimeException(e);
+        } finally {
+
+            try {
+                inputStream.close();
+                outputStream.close();
+                this.socket.close();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 }
