@@ -4,8 +4,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -26,32 +24,17 @@ public class ServerListnerThread extends Thread{
     @Override
     public void run(){
 
-        Socket socket = null;
-        InputStream inputStream = null;
-        OutputStream outputStream = null;
         try {
-            socket = this.serverSocket.accept();
-            LOGGER.info("Server connection accepted : {}", socket.getInetAddress());
-            inputStream = socket.getInputStream();
-            outputStream = socket.getOutputStream();
 
-            String html = "<html> <head> <title>Java HTTP Server</title> </head> <body> <h1>Simple JAVA HTTP server</h1> </body></html>";
-            final String CRLF = "\r\n";
-            byte[] content = html.getBytes("UTF-8");
-            String response = "HTTP/1.1 200 OK" + CRLF +
-                    "Content-Type: text/html; charset=UTF-8" + CRLF +
-                    "Content-Length: " + content.length + CRLF +
-                    "Connection: keep-alive" + CRLF +
-                    CRLF;
+            while(serverSocket.isBound() && !serverSocket.isClosed()){
+                Socket socket = serverSocket.accept();
+                LOGGER.info("Connection accepted : {}", socket.getInetAddress());
+                HttpConnectionWorkerThread workerThread = new HttpConnectionWorkerThread(socket);
+                workerThread.start();
+            }
 
-            outputStream.write(response.getBytes("UTF-8"));
-            outputStream.write(content);
-            outputStream.flush();
+            //serverSocket.close(); //TODO handle later
 
-            inputStream.close();
-            outputStream.close();
-            socket.close();
-            serverSocket.close();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
