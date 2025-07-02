@@ -33,10 +33,14 @@ public class ServerListnerThread extends Thread{
                 workerThread.start();
             }
 
-            //serverSocket.close(); //TODO handle later
-
         } catch (IOException e) {
             throw new RuntimeException(e);
+        } finally {
+            if(serverSocket == null){
+                try {
+                    serverSocket.close();
+                } catch (IOException e) {}
+            }
         }
 
     }
