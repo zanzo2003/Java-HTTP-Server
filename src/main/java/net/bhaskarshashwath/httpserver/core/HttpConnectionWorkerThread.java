@@ -26,6 +26,12 @@ public class HttpConnectionWorkerThread extends Thread{
             inputStream = socket.getInputStream();
             outputStream = socket.getOutputStream();
 
+            int _byte;
+
+            while( (_byte = inputStream.read()) >= 0){
+                System.out.print( (char)_byte);
+            }
+
             String html = "<html> <head> <title>Java HTTP Server</title> </head> <body> <h1>Simple JAVA HTTP server</h1> </body></html>";
             final String CRLF = "\r\n";
             byte[] content = html.getBytes("UTF-8");
@@ -42,16 +48,17 @@ public class HttpConnectionWorkerThread extends Thread{
             LOGGER.info("Connection processing finished");
 
         } catch (IOException e) {
+            LOGGER.error("Problem with serving ", e);
             throw new RuntimeException(e);
         } finally {
-
             try {
                 inputStream.close();
                 outputStream.close();
                 this.socket.close();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+            } catch (IOException e) {}
         }
     }
+
+
+
 }

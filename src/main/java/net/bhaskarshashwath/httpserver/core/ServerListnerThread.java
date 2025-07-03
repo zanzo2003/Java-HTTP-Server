@@ -34,9 +34,10 @@ public class ServerListnerThread extends Thread{
             }
 
         } catch (IOException e) {
+            LOGGER.error("Problem with setting socket ", e);
             throw new RuntimeException(e);
         } finally {
-            if(serverSocket == null){
+            if(serverSocket != null){
                 try {
                     serverSocket.close();
                 } catch (IOException e) {}
